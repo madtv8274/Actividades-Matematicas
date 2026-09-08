@@ -10,8 +10,8 @@ if "score" not in st.session_state:
 if "leaderboard" not in st.session_state:
     st.session_state.leaderboard = [
         {"Nombre": "Rubén Madrid Rosas ⭐", "Puntaje": 1000},
-        {"Nombre": "Mateo", "Puntaje": 800},
-        {"Nombre": "Valentina", "Puntaje": 650}
+        {"Nombre": "Mateo Juárez García", "Puntaje": 800},
+        {"Nombre": "Valentina Mart´ínez Meza", "Puntaje": 650}
     ]
 
 st.title("🏆 Actividades Matemáticas: ¡El Desafío de Matemáticas!")
@@ -61,6 +61,9 @@ preguntas_db = {
 with st.sidebar:
     st.header("👤 Registro de Jugador")
     nombre_usuario = st.text_input("Ingresa tu nombre para el podio:", value="Invitado")
+    
+    # 🆕 AGREGAMOS LA OPCIÓN DEL GRUPO AQUÍ:
+    grupo_usuario = st.selectbox("Selecciona tu grupo:", ["A", "B", "C", "D", "E"]
     
     st.header("📊 Tabla de Posiciones")
     df_leaderboard = pd.DataFrame(st.session_state.leaderboard)
