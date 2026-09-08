@@ -9,7 +9,7 @@ if "score" not in st.session_state:
     st.session_state.score = 0
 if "leaderboard" not in st.session_state:
     st.session_state.leaderboard = [
-        {"Nombre": "Sofía ⭐", "Puntaje": 950},
+        {"Nombre": "Rubén Madrid Rosas ⭐", "Puntaje": 1000},
         {"Nombre": "Mateo", "Puntaje": 800},
         {"Nombre": "Valentina", "Puntaje": 650}
     ]
