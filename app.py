@@ -2,7 +2,7 @@ import streamlit as st
 import time
 import pandas as pd
 
-st.set_page_config(page_title="MathKahoot Secundaria", page_icon="🏆", layout="wide")
+st.set_page_config(page_title="Matemáticas Secundaria", page_icon="🏆", layout="wide")
 
 # Inicializar estados de la aplicación
 if "score" not in st.session_state:
@@ -13,10 +13,8 @@ if "leaderboard" not in st.session_state:
         {"Nombre": "Mateo", "Puntaje": 800},
         {"Nombre": "Valentina", "Puntaje": 650}
     ]
-if "quiz_terminado" not in st.session_state:
-    st.session_state.quiz_terminado = False
 
-st.title("🏆 MathKahoot: ¡El Desafío de Matemáticas!")
+st.title("🏆 Actividades Matemáticas: ¡El Desafío de Matemáticas!")
 st.write("Demuestra tus habilidades matemáticas y conquista el podio.")
 
 # BASE DE DATOS DE 10 PREGUNTAS POR GRADO
@@ -31,7 +29,7 @@ preguntas_db = {
         {"p": "¿Cuál es el perímetro de un cuadrado si uno de sus lados mide 6 cm?", "o": ["12 cm", "36 cm", "24 cm", "18 cm"], "c": "24 cm"},
         {"p": "¿Qué número falta en la serie? 2, 5, 8, __, 14", "o": ["10", "11", "12", "13"], "c": "11"},
         {"p": "Si reparto 35 dulces entre 5 niños equitativamente, ¿cuántos recibe cada uno?", "o": ["5", "6", "7", "8"], "c": "7"},
-        {"p": "¿Cuál es el resultado de la operación: 4 + 5 × 2?", "o": ["18", "14", "22", "13"], "c": "14"}
+        {"p": "Cuál es el resultado de la operación: 4 + 5 × 2?", "o": ["18", "14", "22", "13"], "c": "14"}
     ],
     "2º de Secundaria": [
         {"p": "Resuelve: 2x + 5 = 15", "o": ["x = 5", "x = 10", "x = 7.5", "x = 2"], "c": "x = 5"},
@@ -47,7 +45,7 @@ preguntas_db = {
     ],
     "3º de Secundaria": [
         {"p": "Teorema de Pitágoras: Catetos de 6 y 8 cm. ¿Cuánto mide la hipotenusa?", "o": ["10 cm", "14 cm", "100 cm", "12 cm"], "c": "10 cm"},
-        {"p": "¿Cuáles son las soluciones de la ecuación cuadrática x² - 25 = 0?", "o": ["5", "-5", "5 y -5", "25"], "c": "5 y -5"},
+        {"p": "Cuáles son las soluciones de la ecuación cuadrática x² - 25 = 0?", "o": ["5", "-5", "5 y -5", "25"], "c": "5 y -5"},
         {"p": "En un triángulo rectángulo, el seno de un ángulo se define como:", "o": ["Cat. Opuesto / Hipotenusa", "Cat. Adyacente / Hipotenusa", "Cat. Opuesto / Cat. Adyacente", "Hipotenusa / Cat. Opuesto"], "c": "Cat. Opuesto / Hipotenusa"},
         {"p": "Si la función es y = 3x - 2, ¿cuál es la pendiente de la recta?", "o": ["3", "-2", "x", "2"], "c": "3"},
         {"p": "Aplica el Teorema de Tales: Si una línea paralela corta un triángulo, los segmentos son:", "o": ["Iguales", "Proporcionales", "Perpendiculares", "Asimétricos"], "c": "Proporcionales"},
@@ -71,13 +69,12 @@ with st.sidebar:
 # --- FLUJO PRINCIPAL ---
 grado = st.selectbox("🎯 Elige tu Grado Escolar:", list(preguntas_db.keys()))
 
-# Temporizador visual animado (Simulación de estrés tipo Kahoot)
+# Temporizador visual animado
 progreso_tiempo = st.progress(1.0)
 status_tiempo = st.empty()
 
-# Cuenta regresiva simulada al cambiar de grado o cargar
 for percent_complete in range(100, 0, -10):
-    time.sleep(0.05)
+    time.sleep(0.02)
     progreso_tiempo.progress(percent_complete / 100)
 status_tiempo.caption("⏱️ ¡Tiempo corriendo para responder el bloque entero!")
 
@@ -88,27 +85,32 @@ with st.form("quiz_form"):
     for idx, item in enumerate(preguntas_db[grado]):
         st.markdown(f"#### 📝 Pregunta {idx+1}")
         st.write(item["p"])
+        # index=None hace que aparezcan vacías las opciones
         respuestas_alumno[idx] = st.radio(
             "Selecciona la opción correcta:", 
             item["o"], 
+            index=None,
             key=f"ans_{grado}_{idx}"
         )
         st.write("---")
         
-    enviar_respuestas = st.form_submit_form("¡Terminar Cuestionario y Enviar al Podio!")
+    enviar_respuestas = st.form_submit_button("¡Terminar Cuestionario y Enviar al Podio!")
 
 if enviar_respuestas:
     puntaje_obtenido = 0
+    respondidas_completas = True
+    
     for idx, item in enumerate(preguntas_db[grado]):
-        if respuestas_alumno[idx] == item["c"]:
-            puntaje_obtenido += 100 # 100 puntos por respuesta correcta
+        if respuestas_alumno[idx] is None:
+            respondidas_completas = False
+        elif respuestas_alumno[idx] == item["c"]:
+            puntaje_obtenido += 100
             
-    st.session_state.score = puntaje_obtenido
-    
-    # Agregar a la tabla de posiciones si no se ha agregado ya
-    nuevo_registro = {"Nombre": nombre_usuario, "Puntaje": puntaje_obtenido}
-    st.session_state.leaderboard.append(nuevo_registro)
-    
-    st.balloons()
-    st.success(f"🎉 ¡Felicidades {nombre_usuario}! Has terminado el bloque con **{puntaje_obtenido} puntos**.")
-    st.info("Revisa la barra lateral para ver tu lugar en la Tabla de Posiciones.")
+    if not respondidas_completas:
+        st.warning("⚠️ Asegúrate de responder todas las preguntas antes de enviar.")
+    else:
+        st.session_state.score = puntaje_obtenido
+        nuevo_registro = {"Nombre": nombre_usuario, "Puntaje": puntaje_obtenido}
+        st.session_state.leaderboard.append(nuevo_registro)
+        st.balloons()
+        st.success(f"🎉 ¡Felicidades {nombre_usuario}! Has terminado con **{puntaje_obtenido} puntos**.")
