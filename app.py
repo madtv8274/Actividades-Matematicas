@@ -63,7 +63,7 @@ with st.sidebar:
     nombre_usuario = st.text_input("Ingresa tu nombre para el podio:", value="Invitado")
     
     # 🆕 AGREGAMOS LA OPCIÓN DEL GRUPO AQUÍ:
-    grupo_usuario = st.selectbox("Selecciona tu grupo:", ["A", "B", "C", "D", "E"]
+    grupo_usuario = st.selectbox("Selecciona tu grupo:", ["A", "B", "C", "D", "E"])
     
     st.header("📊 Tabla de Posiciones")
     df_leaderboard = pd.DataFrame(st.session_state.leaderboard)
